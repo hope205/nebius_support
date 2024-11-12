@@ -28,13 +28,19 @@ It’s recommended to use a virtual environment to manage dependencies. Run the 
 
 -   **On Windows:**
 
-    `python -m venv venv
-    venv\Scripts\activate` 
+    `python -m venv .neb`
+
+    Activate
+    
+    `.neb\Scripts\activate` 
     
 -   **On macOS and Linux:**
     
-    `python3 -m venv venv
-    source venv/bin/activate` 
+    `python3 -m venv .neb`
+
+    Activate:
+
+    `source .neb/bin/activate` 
     
 
 ### 3. Install Required Packages
