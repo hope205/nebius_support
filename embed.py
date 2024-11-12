@@ -8,7 +8,7 @@ load_dotenv()
 
 # Initialize ChromaD
 client = chromadb.PersistentClient(path="chroma_db", settings=Settings())
-collection = client.get_or_create_collection(name="diva")
+collection = client.get_or_create_collection(name="net_test")
 
 
 #net_test

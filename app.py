@@ -12,10 +12,8 @@ load_dotenv()
 
 st.set_page_config(page_title="Nebius", page_icon=":robot_face:")
 
-
 #load your 
 client = chromadb.PersistentClient(path="chroma_db")
-collection = client.get_collection(name="diva")
 
 #net_test
 
@@ -101,6 +99,7 @@ if page == "Knowledge base":
 
         st.text_area("Embeddings generated succefully")
 
+
     else:
         st.write("Please upload a text file to build your knowledge base")
 
@@ -110,6 +109,10 @@ if page == "Knowledge base":
 # Page 2: Chat Page
 elif page == "Chat":
     st.title("Nebius Customer Assistant")
+
+
+    collection = client.get_collection(name="net_test")
+
 
 
     # Initialise session state variables
