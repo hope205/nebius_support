@@ -32,7 +32,7 @@ embedding_tranform/
 files/
 bot.py
 
-.venv/
+.neb/
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
