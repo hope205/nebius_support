@@ -12,10 +12,10 @@ load_dotenv()
 
 st.set_page_config(page_title="Nebius", page_icon=":robot_face:")
 
-#load your 
+#load your chroma db
 client = chromadb.PersistentClient(path="chroma_db")
 
-#net_test
+
 
 
 system_message = """
