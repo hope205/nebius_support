@@ -1,7 +1,5 @@
-torch==2.3.1
 python-dotenv
 streamlit
 openai
 chromadb
 streamlit_chat
-sentence-transformers

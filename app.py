@@ -1,21 +1,12 @@
-import chromadb,json, os
+from embed import *
 import streamlit as st
 from streamlit_chat import message
-from openai import OpenAI
-from embed import *
-from dotenv import load_dotenv
-
-
-
-load_dotenv()
 
 
 st.set_page_config(page_title="Nebius", page_icon=":robot_face:")
 
 #load your chroma db
 client = chromadb.PersistentClient(path="chroma_db")
-
-
 
 
 system_message = """
@@ -54,14 +45,14 @@ def generate_response(prompt):
 
     client = OpenAI(
     base_url="https://api.studio.nebius.ai/v1/",
-    api_key=os.environ.get("NEBIUS_API_KEY")
+    api_key=os.getenv("NEBIUS_API_KEY")
 )
 
     # Run the chat client
     response = client.chat.completions.create(
-        model="meta-llama/Meta-Llama-3.1-70B-Instruct-fast",
+        model= "Qwen/Qwen2.5-72B-Instruct-fast",
         messages= st.session_state['messages'],
-        temperature=0.2,
+        top_p=0.01,
         max_tokens=150,
     )
     r = response.to_json()
@@ -91,19 +82,18 @@ if page == "Knowledge base":
         # Read the text file 
         file_content = uploaded_file.read().decode("utf-8")
 
+
         #this function helps to create chunks of text from the document
         document = load_document_and_chunk(file_content)
+
 
         # Each chunk of text is converted to an embedding format
         embedding = generate_embeddings(document)
 
+
         st.text_area("Embeddings generated succefully")
-
-
     else:
         st.write("Please upload a text file to build your knowledge base")
-
-
 
 
 # Page 2: Chat Page
@@ -111,7 +101,7 @@ elif page == "Chat":
     st.title("Nebius Customer Assistant")
 
 
-    collection = client.get_collection(name="net_test")
+    collection = client.get_collection(name="neb_data",embedding_function= custom_embeddings)
 
 
 
@@ -125,10 +115,12 @@ elif page == "Chat":
             {"role": "system", "content":  system_message}
         ]
         
-
     st.sidebar.title("Sidebar")
     clear_button = st.sidebar.button("Clear Conversation", key="clear")
 
+
+
+    #clears conversation history if button is clicked
     if clear_button:
         st.session_state['generated'] = []
         st.session_state['past'] = []
@@ -136,26 +128,43 @@ elif page == "Chat":
             {"role": "system", "content": system_message}
         ]
 
+   
     # container for chat history
     response_container = st.container()
     # container for text box
-
+                          
+    # Create a container to hold the form and the chat interface
     container = st.container()
-
+    
+    # Use the container to create a form for user input
     with container:
+        # Create a form with a unique key and an option to clear on submission
         with st.form(key='my_form', clear_on_submit=True):
+            # Text area for user input with a height of 100 pixels
             user_input = st.text_area("You:", key='input', height=100)
+            
+            # Button to submit the form
             submit_button = st.form_submit_button(label='Send')
-
+    
+        # Check if the submit button is clicked and the user has provided input
         if submit_button and user_input:
+            # Generates a response using the generate_response function
             output = generate_response(user_input)
             
+            # Append the user's input to the 'past' session state list
             st.session_state['past'].append(user_input)
+            
+            # Append the generated response to the generated session state list
             st.session_state['generated'].append(output)
-        
-
+    
+    # Check if there are any generated responses in the session state
     if st.session_state['generated']:
+        # Create a container to display the conversation history
         with response_container:
+            # Loop through the generated responses and display both user inputs and outputs
             for i in range(len(st.session_state['generated'])):
+                # Display the user's message
                 message(st.session_state["past"][i], is_user=True, key=str(i) + '_user')
+                
+                # Display the generated response
                 message(st.session_state["generated"][i], key=str(i))
